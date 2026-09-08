@@ -1,23 +1,41 @@
 import json
 import logging
 from enum import Enum
-from typing import NoReturn
+from typing import Annotated, NoReturn
 
-from fastapi import APIRouter, Body, HTTPException
 from pydantic import BaseModel, StrictInt
 
+from app.agent_service import (
+    AgentConfigurationError,
+    AgentTurnError,
+    AgentTurnService,
+    AgentTurnUnavailableError,
+)
 from app.domain.game import GameStatus, InvalidMoveError, Player
+from app.settings import Settings
 from app.store import (
     CpuTurnUnavailableError,
     GameMode,
     GameNotFoundError,
     GameRecord,
     GameStore,
+    PlayerAssignments,
+    PlayerType,
 )
+from fastapi import APIRouter, Body, HTTPException
+
+
+class PlayerAssignmentsRequest(BaseModel):
+    x: PlayerType
+    o: PlayerType
 
 
 class CreateGameRequest(BaseModel):
     mode: GameMode = GameMode.HUMAN_VS_HUMAN
+    players: PlayerAssignmentsRequest | None = None
+
+
+DEFAULT_CREATE_GAME_REQUEST = CreateGameRequest()
 
 
 class MoveActor(str, Enum):
@@ -33,6 +51,7 @@ class MoveRequest(BaseModel):
 class GameStateResponse(BaseModel):
     game_id: str
     mode: GameMode
+    players: PlayerAssignmentsRequest
     board: list[Player | None]
     current_player: Player | None
     status: GameStatus
@@ -43,6 +62,7 @@ class GameStateResponse(BaseModel):
 router = APIRouter(prefix="/games", tags=["games"])
 store = GameStore()
 audit_logger = logging.getLogger("tic_tac_toe.audit")
+agent_turn_service = AgentTurnService(settings=Settings(), store=store)
 
 
 def _error(status_code: int, code: str, message: str) -> NoReturn:
@@ -88,6 +108,7 @@ def _state(game_id: str, record: GameRecord) -> GameStateResponse:
     return GameStateResponse(
         game_id=game_id,
         mode=record.mode,
+        players=PlayerAssignmentsRequest(x=record.players.x, o=record.players.o),
         board=list(game.board),
         current_player=game.current_player,
         status=game.status,
@@ -97,30 +118,31 @@ def _state(game_id: str, record: GameRecord) -> GameStateResponse:
 
 
 def _move_rejection(record: GameRecord, actor: MoveActor) -> tuple[str, str] | None:
-    if record.mode is GameMode.CPU_VS_CPU:
+    current_player = record.game.current_player
+    if current_player is None:
+        return "invalid_move", "game is completed"
+
+    controller = record.players.for_player(current_player)
+    if controller is PlayerType.CPU:
         return "cpu_turn_unavailable", "current turn is server-controlled"
 
-    if record.mode is GameMode.HUMAN_VS_CPU:
-        if record.game.current_player is Player.O:
-            return "cpu_turn_unavailable", "current turn is server-controlled"
-        if actor is not MoveActor.HUMAN:
-            return "move_actor_unavailable", "human-vs-cpu moves must be submitted by human"
-
-    if record.mode is GameMode.AI_VS_CPU:
-        if record.game.current_player is Player.O:
-            return "cpu_turn_unavailable", "current turn is server-controlled"
-        if actor is not MoveActor.AI_AGENT:
-            return "move_actor_unavailable", "ai-vs-cpu moves must be submitted by ai-agent"
-
-    if record.mode is GameMode.HUMAN_VS_HUMAN and actor is not MoveActor.HUMAN:
-        return "move_actor_unavailable", "human-vs-human moves must be submitted by human"
+    expected_actor = MoveActor.HUMAN if controller is PlayerType.HUMAN else MoveActor.AI_AGENT
+    if actor is not expected_actor:
+        return "move_actor_unavailable", f"current turn must be submitted by {expected_actor.value}"
 
     return None
 
 
 @router.post("", response_model=GameStateResponse, status_code=201, operation_id="create_game")
-def create_game(request: CreateGameRequest = Body(default=CreateGameRequest())) -> GameStateResponse:
-    game_id, record = store.create(request.mode)
+def create_game(
+    request: Annotated[CreateGameRequest, Body()] = DEFAULT_CREATE_GAME_REQUEST,
+) -> GameStateResponse:
+    assignments = (
+        PlayerAssignments(x=request.players.x, o=request.players.o)
+        if request.players is not None
+        else PlayerAssignments.from_mode(request.mode)
+    )
+    game_id, record = store.create(players=assignments)
     return _state(game_id, record)
 
 
@@ -209,6 +231,48 @@ def advance_cpu_turn(game_id: str) -> GameStateResponse:
         accepted=True,
         turn=record.game.turn,
     )
+    return _state(game_id, record)
+
+
+@router.post(
+    "/{game_id}/agent-turn",
+    response_model=GameStateResponse,
+    operation_id="run_agent_turn",
+)
+async def run_agent_turn(game_id: str) -> GameStateResponse:
+    before = _get_record(game_id)
+    try:
+        record = await agent_turn_service.run(game_id)
+    except AgentTurnUnavailableError as exc:
+        _audit(
+            actor="ai-agent",
+            tool="agent_turn",
+            game_id=game_id,
+            requested_move=None,
+            accepted=False,
+            turn=before.game.turn,
+        )
+        _error(409, "agent_turn_unavailable", str(exc))
+    except AgentConfigurationError:
+        _audit(
+            actor="ai-agent",
+            tool="agent_turn",
+            game_id=game_id,
+            requested_move=None,
+            accepted=False,
+            turn=before.game.turn,
+        )
+        _error(503, "agent_configuration_missing", "agent runtime is not configured")
+    except AgentTurnError:
+        _audit(
+            actor="ai-agent",
+            tool="agent_turn",
+            game_id=game_id,
+            requested_move=None,
+            accepted=False,
+            turn=before.game.turn,
+        )
+        _error(502, "agent_turn_failed", "agent did not complete a legal turn")
     return _state(game_id, record)
 
 

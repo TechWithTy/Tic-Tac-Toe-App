@@ -5,12 +5,17 @@ from fastapi.testclient import TestClient
 
 from app.main import app
 
-
 client = TestClient(app)
 
 
 def create_game(mode: str = "human_vs_human") -> dict:
     response = client.post("/games", json={"mode": mode})
+    assert response.status_code == 201
+    return response.json()
+
+
+def create_game_with_players(x: str, o: str) -> dict:
+    response = client.post("/games", json={"players": {"x": x, "o": o}})
     assert response.status_code == 201
     return response.json()
 
@@ -30,6 +35,48 @@ def test_create_and_get_game_return_canonical_initial_state():
 
     assert response.status_code == 200
     assert response.json() == created
+
+
+def test_create_game_accepts_explicit_independent_player_assignments():
+    created = create_game_with_players("human", "ai-agent")
+
+    assert created["players"] == {"x": "human", "o": "ai-agent"}
+    assert created["mode"] == "human_vs_ai"
+    assert created["current_player"] == "X"
+
+
+def test_cpu_and_human_pairing_uses_current_player_controller_for_validation():
+    created = create_game_with_players("cpu", "human")
+    game_id = created["game_id"]
+
+    rejected = client.post(f"/games/{game_id}/moves", json={"index": 0, "actor": "human"})
+    assert rejected.status_code == 409
+    assert rejected.json()["detail"]["code"] == "cpu_turn_unavailable"
+
+    cpu_move = client.post(f"/games/{game_id}/cpu-move")
+    assert cpu_move.status_code == 200
+    assert cpu_move.json()["current_player"] == "O"
+
+    human_move = client.post(f"/games/{game_id}/moves", json={"index": 1, "actor": "human"})
+    assert human_move.status_code == 200
+    assert human_move.json()["board"][1] == "O"
+
+
+def test_human_and_ai_pairing_accepts_only_the_controller_for_each_turn():
+    created = create_game_with_players("human", "ai-agent")
+    game_id = created["game_id"]
+
+    human_move = client.post(f"/games/{game_id}/moves", json={"index": 0, "actor": "human"})
+    assert human_move.status_code == 200
+    assert human_move.json()["current_player"] == "O"
+
+    rejected = client.post(f"/games/{game_id}/moves", json={"index": 1, "actor": "human"})
+    assert rejected.status_code == 409
+    assert rejected.json()["detail"]["code"] == "move_actor_unavailable"
+
+    agent_move = client.post(f"/games/{game_id}/moves", json={"index": 1, "actor": "ai-agent"})
+    assert agent_move.status_code == 200
+    assert agent_move.json()["board"][1] == "O"
 
 
 def test_valid_move_returns_new_canonical_state():
