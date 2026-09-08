@@ -127,7 +127,7 @@ describe("player pairing setup", () => {
     expect(screen.getByText("Current Turn")).toBeInTheDocument();
     const turnPanel = screen.getByText("Current Turn").closest("[aria-live='polite']");
     expect(turnPanel).toHaveTextContent("X To Move · Server State");
-    expect(turnPanel).toHaveClass("items-center", "text-center");
+    expect(turnPanel).toHaveClass("items-center", "text-center", "mx-auto", "max-w-[34rem]");
   });
 
   it("renders one crisp hover indicator without a placeholder glyph in empty cells", async () => {

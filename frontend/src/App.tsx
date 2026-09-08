@@ -232,7 +232,7 @@ function App() {
                 </Button>
               </div>
 
-              <div aria-live="polite" className="mb-5 flex w-full flex-col items-center justify-center gap-2 rounded-2xl border border-[#d8ff56]/15 bg-[#d8ff56]/[0.06] px-4 py-4 text-center">
+              <div aria-live="polite" className="mx-auto mb-5 flex w-full max-w-[34rem] flex-col items-center justify-center gap-2 rounded-2xl border border-[#d8ff56]/15 bg-[#d8ff56]/[0.06] px-4 py-4 text-center">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#d8ff56]/70">Current Turn</p>
                 <p className="text-sm font-medium text-white">{gameStatus} <span className="font-normal text-white/45">· Server State</span></p>
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#d8ff56] text-lg font-semibold text-[#101219]">{gameState.currentPlayer ?? gameState.winner ?? "—"}</span>
