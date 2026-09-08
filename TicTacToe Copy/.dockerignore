@@ -1,0 +1,16 @@
+.git
+.env
+.env.*
+!.env.example
+
+backend/.venv
+backend/__pycache__
+backend/fastapi
+backend/lightinig-mcp-sync
+frontend/node_modules
+frontend/dist
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.ruff_cache
+.playwright-mcp
