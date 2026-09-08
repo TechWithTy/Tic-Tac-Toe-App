@@ -66,15 +66,23 @@ GitHub CodeQL security-extended analysis for both `python` and
 scheduled scan. Results are uploaded to GitHub code scanning when the workflow runs
 in GitHub Actions.
 
-The CodeQL CLI can also be used locally after installation:
+The CodeQL CLI can also be used locally after installation. The JavaScript/TypeScript
+scan targets the frontend, while the Python scan targets the first-party FastAPI code
+under `backend/app`:
 
 ```powershell
 codeql database create codeql-db-javascript --language=javascript-typescript --source-root frontend --overwrite
 codeql database analyze codeql-db-javascript --format=sarif-latest --output=codeql-javascript.sarif --download
+
+codeql database create codeql-db-python --language=python --source-root backend/app --overwrite
+codeql database analyze codeql-db-python --format=sarif-latest --output=codeql-python.sarif --download
 ```
 
-CodeQL is an additional security signal, not a replacement for the project tests,
-Ruff, ESLint, TypeScript checks, or production build.
+The local Python scan requires a Python launcher available to CodeQL. On Windows,
+install Python 3.12 and ensure `py` or `python` is on `PATH`; WSL users can run the
+same commands with the Linux CodeQL bundle. CodeQL is an additional security signal,
+not a replacement for the project tests, Ruff, ESLint, TypeScript checks, or
+production build.
 
 ## Project structure
 
@@ -92,5 +100,18 @@ docker compose up --build
 ```
 
 Open <http://localhost:8080>. See [deploy/README.md](deploy/README.md) for local-image Kubernetes notes. The application uses in-memory state; authentication, persistence, multiplayer networking, and production cluster provisioning are out of scope for this exercise.
+
+To verify the container setup without starting the services, validate the Compose
+file and build both images:
+
+```powershell
+docker compose config --quiet
+docker compose build backend frontend
+```
+
+To verify the running stack, use `docker compose ps` and check that the backend is
+healthy, then probe <http://localhost:8000/docs> and <http://localhost:8080/>. The
+Compose setup exposes FastAPI on port `8000` and the Nginx-served frontend on port
+`8080`.
 
 Screen recording link: provided with the assignment submission.

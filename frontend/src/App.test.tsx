@@ -49,13 +49,30 @@ describe("player pairing setup", () => {
     expect(screen.getByText("A server-led tic-tac-toe room").parentElement).toHaveClass("text-center", "sm:text-left");
     expect(screen.getByRole("heading", { name: /small board/i })).toHaveClass("text-center", "sm:text-left");
     expect(screen.getByText(/focused arena for human play/i)).toHaveClass("text-center", "sm:text-left");
-    expect(screen.getByRole("group", { name: /player x/i }).querySelector("legend")).toHaveClass("justify-center", "text-center", "sm:justify-start", "sm:text-left");
-    expect(screen.getByRole("group", { name: /player o/i }).querySelector("legend")).toHaveClass("justify-center", "text-center", "sm:justify-start", "sm:text-left");
-    expect(screen.getAllByText("Human")[0].parentElement).toHaveClass("text-center", "sm:text-left");
+    expect(screen.getByRole("group", { name: /player x/i }).querySelector("legend")).toHaveClass("hidden", "sm:flex", "justify-start");
+    expect(screen.getByRole("group", { name: /player o/i }).querySelector("legend")).toHaveClass("hidden", "sm:flex", "justify-start");
+    const humanOption = within(screen.getByRole("group", { name: /player x/i })).getAllByRole("radio", { name: "Human" })[0].closest("label");
+    expect(humanOption?.querySelector("span.flex-1")).toHaveClass("text-center", "sm:text-left");
 
     const boardStatus = screen.getByText(/choose a controller for each player/i).parentElement;
     expect(boardStatus).toHaveClass("flex-col", "items-center", "text-center", "sm:flex-row", "sm:text-left");
     expect(screen.getByText(/server proposes the truth/i).parentElement).toHaveClass("items-center", "text-center", "sm:flex-row");
+  });
+
+  it("provides mobile accordions for Player X and Player O options", () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => unavailableCapabilitiesResponse }));
+    render(<App />);
+
+    for (const player of ["X", "O"]) {
+      const playerGroup = screen.getByRole("group", { name: `Player ${player}` });
+      const accordion = playerGroup.querySelector("details");
+      const summary = accordion?.querySelector("summary");
+
+      expect(accordion).toHaveAttribute("open");
+      expect(summary).toHaveClass("justify-center", "text-center", "sm:hidden");
+      expect(summary).toHaveTextContent(`Player ${player}`);
+      expect(summary).toHaveTextContent("Human");
+    }
   });
 
   it("does not create a game until Start game is pressed", async () => {
