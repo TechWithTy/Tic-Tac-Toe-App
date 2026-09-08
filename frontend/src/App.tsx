@@ -179,12 +179,12 @@ function App() {
     <main className="min-h-screen overflow-hidden bg-[#0b0d12] text-[#f7f7f2]">
       <div aria-hidden="true" className="pointer-events-none fixed inset-0 bg-[radial-gradient(circle_at_20%_10%,rgba(216,255,86,0.08),transparent_28%),radial-gradient(circle_at_90%_80%,rgba(255,138,101,0.08),transparent_25%)]" />
       <div className="relative mx-auto flex min-h-screen w-full max-w-7xl flex-col px-5 py-6 sm:px-8 lg:px-12">
-        <header className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+        <header className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
             <span className="flex h-10 w-10 items-center justify-center rounded-2xl bg-[#d8ff56] text-[#101219] shadow-[0_0_2rem_rgba(216,255,86,0.18)]">
               <Sparkles aria-hidden="true" className="h-5 w-5" />
             </span>
-            <div>
+            <div className="text-center sm:text-left">
               <p className="text-sm font-semibold tracking-[0.22em] text-white">GRIDLINE</p>
               <p className="text-xs text-white/40">A server-led tic-tac-toe room</p>
             </div>
@@ -196,10 +196,10 @@ function App() {
         </header>
 
         <section className="grid flex-1 items-center gap-10 py-12 lg:grid-cols-[minmax(0,0.85fr)_minmax(28rem,1.15fr)] lg:gap-16 lg:py-16">
-          <div className="max-w-xl">
-            <p className="mb-5 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#d8ff56]"><span className="h-px w-8 bg-[#d8ff56]" />Make your mark</p>
-            <h1 className="max-w-lg text-5xl font-semibold leading-[0.98] tracking-[-0.055em] text-white sm:text-7xl">Small board.<br /><span className="text-white/35">Big decisions.</span></h1>
-            <p className="mt-7 max-w-md text-base leading-7 text-white/55">A focused arena for human play, deterministic opponents, and agent proposals validated by the game server.</p>
+          <div className="max-w-xl text-center sm:text-left">
+            <p className="mb-5 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.24em] text-[#d8ff56] sm:justify-start"><span className="h-px w-8 bg-[#d8ff56]" />Make your mark</p>
+            <h1 className="max-w-lg text-center text-5xl font-semibold leading-[0.98] tracking-[-0.055em] text-white sm:text-left sm:text-7xl">Small board.<br /><span className="text-white/35">Big decisions.</span></h1>
+            <p className="mt-7 max-w-md text-center text-base leading-7 text-white/55 sm:text-left">A focused arena for human play, deterministic opponents, and agent proposals validated by the game server.</p>
 
             <div className="mt-10 rounded-3xl border border-white/10 bg-white/[0.025] p-5 backdrop-blur-sm sm:p-6">
               <div className="flex items-end justify-between gap-4">
@@ -244,8 +244,8 @@ function App() {
 
               {isAiThinking && <AiThinkingIndicator />}
 
-              <div className="mt-5 flex min-w-0 items-start gap-3 text-sm leading-6 text-white/45">
-                <span className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/40"><Wifi aria-hidden="true" className="h-4 w-4" /></span>
+              <div className="mt-5 flex min-w-0 flex-col items-center gap-3 text-center text-sm leading-6 text-white/45 sm:flex-row sm:items-start sm:text-left">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-white/5 text-white/40 sm:mt-0.5"><Wifi aria-hidden="true" className="h-4 w-4" /></span>
                 <p className="min-w-0 break-words">{!isGameStarted ? "Choose a controller for each player, then start the game." : isLoading ? "Syncing With The Game Server…" : currentController === "ai-agent" ? `Waiting For The AI Agent To Propose A ${gameState.currentPlayer} Move Through MCP.` : currentController === "cpu" ? "The CPU Is Thinking…" : gameState.status === "in_progress" ? "Moves Are Validated And Applied By FastAPI." : "The Server Has Closed This Board. Reset To Play Again."}</p>
               </div>
 
@@ -258,7 +258,7 @@ function App() {
           </MagicCard>
         </section>
 
-        <footer className="flex flex-col gap-2 border-t border-white/10 pt-5 text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between">
+        <footer className="flex flex-col items-center gap-2 border-t border-white/10 pt-5 text-center text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <span>Server proposes the truth. The client presents it clearly.</span>
           <span>3 × 3 · X starts · no second rules engine</span>
         </footer>

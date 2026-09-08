@@ -41,6 +41,41 @@ uv run ruff check app tests
 uv run pytest tests -q
 ```
 
+## Continuous integration
+
+The GitHub Actions workflow in [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
+runs on pushes to `main` or `master` and on pull requests. It keeps the frontend and
+backend checks independent so a failure is easy to localize.
+
+The backend job locks the `uv` environment, runs Ruff, and executes the backend test
+suite. The frontend job installs the locked pnpm dependencies, runs ESLint, executes
+the frontend tests, checks TypeScript, and creates a production build.
+
+The same checks can be run locally with the commands in [Verify](#verify). A local
+workflow rehearsal is also available when `act` and Docker are installed:
+
+```powershell
+act -W .github/workflows/ci.yml -j backend -P ubuntu-latest=catthehacker/ubuntu:act-latest --container-architecture linux/amd64
+```
+
+## CodeQL security analysis
+
+The [`.github/workflows/codeql.yml`](.github/workflows/codeql.yml) workflow runs
+GitHub CodeQL security-extended analysis for both `python` and
+`javascript-typescript` on pushes to `main` or `master`, pull requests, and a weekly
+scheduled scan. Results are uploaded to GitHub code scanning when the workflow runs
+in GitHub Actions.
+
+The CodeQL CLI can also be used locally after installation:
+
+```powershell
+codeql database create codeql-db-javascript --language=javascript-typescript --source-root frontend --overwrite
+codeql database analyze codeql-db-javascript --format=sarif-latest --output=codeql-javascript.sarif --download
+```
+
+CodeQL is an additional security signal, not a replacement for the project tests,
+Ruff, ESLint, TypeScript checks, or production build.
+
 ## Project structure
 
 ```text

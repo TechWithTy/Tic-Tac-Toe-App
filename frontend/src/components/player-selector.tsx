@@ -14,7 +14,7 @@ export function PlayerSelector({ player, value, onChange, aiAgentAvailable = fal
 
   return (
     <fieldset aria-label={`Player ${mark}`} className="min-w-0 space-y-3">
-      <legend className="flex items-center gap-2 text-sm font-medium text-white/70">
+      <legend className="flex items-center justify-center gap-2 text-center text-sm font-medium text-white/70 sm:justify-start sm:text-left">
         <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-white/10 text-xs font-semibold text-[#d8ff56]">
           {mark}
         </span>
@@ -45,9 +45,9 @@ export function PlayerSelector({ player, value, onChange, aiAgentAvailable = fal
               <span className={`pointer-events-none flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${selected && !disabled ? "bg-[#d8ff56] text-[#101219]" : "bg-white/10 text-white/55"}`}>
                 <Icon aria-hidden="true" className="h-4 w-4" />
               </span>
-              <span className="pointer-events-none min-w-0">
+              <span className="pointer-events-none min-w-0 flex-1 text-center sm:text-left">
                 <span className={`block text-sm font-medium ${disabled ? "text-white/55" : "text-white"}`}>{label}</span>
-                <span className="mt-0.5 block truncate text-xs text-white/45">{description}</span>
+                <span className="mt-0.5 block break-words text-xs text-white/45 sm:truncate">{description}</span>
               </span>
               <span aria-hidden="true" className={`pointer-events-none ml-auto h-2 w-2 rounded-full ${selected && !disabled ? "bg-[#d8ff56]" : "bg-white/15"}`} />
             </label>

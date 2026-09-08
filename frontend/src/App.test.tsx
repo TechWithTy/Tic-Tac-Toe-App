@@ -41,6 +41,23 @@ describe("player pairing setup", () => {
     expect(screen.getByRole("button", { name: /start game/i })).toBeInTheDocument();
   });
 
+  it("centers mobile brand, player info, board status, and footer copy", () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => unavailableCapabilitiesResponse }));
+    render(<App />);
+
+    expect(screen.getByText("GRIDLINE").closest("div.flex")).toHaveClass("flex-col", "items-center", "sm:flex-row");
+    expect(screen.getByText("A server-led tic-tac-toe room").parentElement).toHaveClass("text-center", "sm:text-left");
+    expect(screen.getByRole("heading", { name: /small board/i })).toHaveClass("text-center", "sm:text-left");
+    expect(screen.getByText(/focused arena for human play/i)).toHaveClass("text-center", "sm:text-left");
+    expect(screen.getByRole("group", { name: /player x/i }).querySelector("legend")).toHaveClass("justify-center", "text-center", "sm:justify-start", "sm:text-left");
+    expect(screen.getByRole("group", { name: /player o/i }).querySelector("legend")).toHaveClass("justify-center", "text-center", "sm:justify-start", "sm:text-left");
+    expect(screen.getAllByText("Human")[0].parentElement).toHaveClass("text-center", "sm:text-left");
+
+    const boardStatus = screen.getByText(/choose a controller for each player/i).parentElement;
+    expect(boardStatus).toHaveClass("flex-col", "items-center", "text-center", "sm:flex-row", "sm:text-left");
+    expect(screen.getByText(/server proposes the truth/i).parentElement).toHaveClass("items-center", "text-center", "sm:flex-row");
+  });
+
   it("does not create a game until Start game is pressed", async () => {
     const fetchMock = vi
       .fn()
@@ -113,7 +130,7 @@ describe("player pairing setup", () => {
     expect(screen.getAllByRole("radio", { name: "CPU" }).every((radio) => radio.hasAttribute("disabled"))).toBe(true);
 
     fireEvent.click(screen.getByRole("button", { name: /reset game/i }));
-    await waitFor(() => expect(screen.getByRole("button", { name: /start game/i })).toBeEnabled());
+    await waitFor(() => expect(screen.getByRole("button", { name: /^Start game$/i })).toBeEnabled());
     expect(screen.getAllByRole("radio", { name: "Human" }).every((radio) => !radio.hasAttribute("disabled"))).toBe(true);
   });
 
@@ -398,7 +415,7 @@ describe("player pairing setup", () => {
 
     fireEvent.click(screen.getByRole("button", { name: /restart game/i }));
 
-    await waitFor(() => expect(screen.getByRole("button", { name: /start game/i })).toBeEnabled());
+    await waitFor(() => expect(screen.getByRole("button", { name: /^Start game$/i })).toBeEnabled());
     expect(screen.queryByRole("heading", { name: /winner: x/i })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /cell 1/i })).toBeDisabled();
     expect(fetchMock).toHaveBeenLastCalledWith(
