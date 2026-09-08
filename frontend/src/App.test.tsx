@@ -75,6 +75,19 @@ describe("player pairing setup", () => {
     }
   });
 
+  it("keeps player options in one mobile column and centers FastAPI status", async () => {
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => unavailableCapabilitiesResponse }));
+    render(<App />);
+
+    await waitFor(() => expect(screen.getByText("FastAPI Connected", { selector: "span" })).toBeInTheDocument());
+    const playerGrid = screen.getByRole("group", { name: /player x/i }).parentElement;
+    expect(playerGrid).toHaveClass("grid-cols-1", "md:grid-cols-2");
+    expect(playerGrid).not.toHaveClass("sm:grid-cols-2");
+
+    const connectionStatus = screen.getByText("FastAPI Connected", { selector: "span" });
+    expect(connectionStatus).toHaveClass("self-center", "text-center", "sm:self-auto");
+  });
+
   it("does not create a game until Start game is pressed", async () => {
     const fetchMock = vi
       .fn()
