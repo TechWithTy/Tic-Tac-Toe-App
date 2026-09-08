@@ -1,0 +1,34 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: deploy/backend.Dockerfile
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-5-mini}
+      LIGHT_SPEED_MCP_URL: http://127.0.0.1:8000/mcp
+      LIGHT_SPEED_MCP_TRANSPORT: ${LIGHT_SPEED_MCP_TRANSPORT:-streamable_http}
+      LIGHT_SPEED_MCP_TIMEOUT_SECONDS: ${LIGHT_SPEED_MCP_TIMEOUT_SECONDS:-10}
+    ports:
+      - "8000:8000"
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/docs')"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build:
+      context: .
+      dockerfile: deploy/frontend.Dockerfile
+      args:
+        VITE_API_URL: /api
+    ports:
+      - "8080:80"
+    depends_on:
+      backend:
+        condition: service_healthy

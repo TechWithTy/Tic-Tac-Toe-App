@@ -8,3 +8,12 @@ __pycache__/
 .pytest_cache/
 .ruff_cache/
 .playwright-mcp/
+
+# Local upstream checkouts used for development/reference only.
+/backend/fastapi/
+/backend/lightinig-mcp-sync/
+
+# Local machine artifacts.
+/debug.log
+/py.cmd
+/python.cmd

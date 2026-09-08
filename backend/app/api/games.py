@@ -59,6 +59,10 @@ class GameStateResponse(BaseModel):
     turn: int
 
 
+class GameCapabilitiesResponse(BaseModel):
+    ai_agent_available: bool
+
+
 router = APIRouter(prefix="/games", tags=["games"])
 store = GameStore()
 audit_logger = logging.getLogger("tic_tac_toe.audit")
@@ -144,6 +148,18 @@ def create_game(
     )
     game_id, record = store.create(players=assignments)
     return _state(game_id, record)
+
+
+@router.get(
+    "/capabilities",
+    response_model=GameCapabilitiesResponse,
+    operation_id="get_game_capabilities",
+)
+def get_game_capabilities() -> GameCapabilitiesResponse:
+    api_key = agent_turn_service.settings.openai_api_key
+    return GameCapabilitiesResponse(
+        ai_agent_available=bool(api_key and api_key.get_secret_value().strip())
+    )
 
 
 @router.get("/{game_id}", response_model=GameStateResponse, operation_id="get_game_state")

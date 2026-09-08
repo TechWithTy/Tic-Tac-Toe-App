@@ -11,7 +11,7 @@ Set-Location backend
 Copy-Item ..\.env.example .env
 ```
 
-Set `OPENAI_API_KEY` locally. Keep `backend/.env` untracked. `OPENAI_MODEL` and the Light Speed MCP URL/transport are configurable through the same file. The default MCP URL is the unified API process at `http://127.0.0.1:8000/mcp`.
+Set `OPENAI_API_KEY` locally. Keep `backend/.env` untracked. `OPENAI_MODEL` and the Light Speed MCP URL/transport are configurable through the same file. The local default MCP URL is `http://127.0.0.1:8003/mcp`; the container Compose configuration explicitly targets the unified API endpoint at `http://127.0.0.1:8000/mcp`.
 
 Start the unified API and MCP server from `backend/`:
 
@@ -21,4 +21,4 @@ uv run uvicorn app.main:app --reload --port 8000
 
 No second MCP process is required. The same FastAPI process serves the API and the constrained MCP surface.
 
-The AI turn endpoint is `POST /games/{game_id}/agent-turn`. It is only available for `ai_vs_cpu` games while X is the current player. The endpoint returns safe structured errors when configuration, MCP connectivity, or the proposed move fails.
+The AI turn endpoint is `POST /games/{game_id}/agent-turn`. It is available whenever the current player is assigned to the AI Agent, regardless of whether the opponent is human, CPU, or another AI Agent. The endpoint returns safe structured errors when configuration, MCP connectivity, or the proposed move fails.

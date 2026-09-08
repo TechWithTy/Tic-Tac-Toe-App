@@ -1,11 +1,43 @@
 import json
 import logging
 
+import pytest
 from fastapi.testclient import TestClient
 
+from app.api import games
 from app.main import app
+from app.settings import Settings
 
 client = TestClient(app)
+
+
+def test_local_dev_frontend_origins_can_complete_cors_preflight():
+    response = client.options(
+        "/games",
+        headers={
+            "Origin": "http://127.0.0.1:5176",
+            "Access-Control-Request-Method": "POST",
+            "Access-Control-Request-Headers": "content-type",
+        },
+    )
+
+    assert response.status_code == 200
+    assert response.headers["access-control-allow-origin"] == "http://127.0.0.1:5176"
+
+
+def test_game_capabilities_hide_ai_agent_without_a_nonempty_openai_key(
+    monkeypatch: pytest.MonkeyPatch,
+):
+    monkeypatch.setattr(
+        games.agent_turn_service,
+        "settings",
+        Settings(openai_api_key=""),
+    )
+
+    response = client.get("/games/capabilities")
+
+    assert response.status_code == 200
+    assert response.json() == {"ai_agent_available": False}
 
 
 def create_game(mode: str = "human_vs_human") -> dict:
