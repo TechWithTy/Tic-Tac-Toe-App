@@ -103,7 +103,7 @@ describe("player pairing setup", () => {
     fireEvent.click(screen.getByRole("button", { name: /start game/i }));
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(2));
     expect(fetchMock).toHaveBeenLastCalledWith(
-      "http://localhost:8000/games",
+      "http://127.0.0.1:8500/games",
       expect.objectContaining({
         body: JSON.stringify({ players: { x: "cpu", o: "human" } }),
         method: "POST",
@@ -208,7 +208,7 @@ describe("player pairing setup", () => {
 
     await waitFor(() => expect(fetchMock).toHaveBeenCalledTimes(3));
     expect(fetchMock).toHaveBeenLastCalledWith(
-      "http://localhost:8000/games/game-1/moves",
+      "http://127.0.0.1:8500/games/game-1/moves",
       expect.objectContaining({ body: JSON.stringify({ actor: "human", index: 0 }), method: "POST" }),
     );
   });
@@ -302,7 +302,7 @@ describe("player pairing setup", () => {
 
     await waitFor(() => expect(screen.getByRole("button", { name: /cell 2/i })).not.toBeDisabled());
     expect(fetchMock).toHaveBeenLastCalledWith(
-      "http://localhost:8000/games/game-1/agent-turn",
+      "http://127.0.0.1:8500/games/game-1/agent-turn",
       expect.objectContaining({ method: "POST" }),
     );
   });
@@ -343,12 +343,12 @@ describe("player pairing setup", () => {
     await waitFor(() => expect(screen.getByRole("dialog", { name: /draw game/i })).toBeInTheDocument());
     expect(fetchMock).toHaveBeenNthCalledWith(
       3,
-      "http://localhost:8000/games/game-1/agent-turn",
+      "http://127.0.0.1:8500/games/game-1/agent-turn",
       expect.objectContaining({ method: "POST" }),
     );
     expect(fetchMock).toHaveBeenNthCalledWith(
       4,
-      "http://localhost:8000/games/game-1/agent-turn",
+      "http://127.0.0.1:8500/games/game-1/agent-turn",
       expect.objectContaining({ method: "POST" }),
     );
   });
@@ -449,7 +449,7 @@ describe("player pairing setup", () => {
     expect(screen.queryByRole("heading", { name: /winner: x/i })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /cell 1/i })).toBeDisabled();
     expect(fetchMock).toHaveBeenLastCalledWith(
-      "http://localhost:8000/games/game-1/reset",
+      "http://127.0.0.1:8500/games/game-1/reset",
       expect.objectContaining({ method: "POST" }),
     );
   });

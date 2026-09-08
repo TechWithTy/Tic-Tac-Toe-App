@@ -97,7 +97,7 @@ def make_service(store: GameStore, move_index: int | None = 4) -> tuple[AgentTur
     service = AgentTurnService(
         settings=Settings(
             openai_api_key="test-key",
-            light_speed_mcp_url="http://127.0.0.1:8000/mcp",
+            light_speed_mcp_url="http://127.0.0.1:8500/mcp",
         ),
         store=store,
         server_factory=FakeMcpServer,
@@ -121,7 +121,7 @@ def test_agent_turn_route_rejects_when_current_player_is_not_ai_agent(mode: str)
 
 def test_settings_default_to_the_unified_fastapi_mcp_endpoint(monkeypatch):
     monkeypatch.delenv("LIGHT_SPEED_MCP_URL", raising=False)
-    assert str(Settings(_env_file=None).light_speed_mcp_url) == "http://127.0.0.1:8000/mcp"
+    assert str(Settings(_env_file=None).light_speed_mcp_url) == "http://127.0.0.1:8500/mcp"
 
 
 @pytest.mark.asyncio
@@ -134,7 +134,7 @@ async def test_agent_service_exposes_only_approved_mcp_tools_async():
 
     await service.run(game_id)
 
-    assert FakeMcpServer.instances[0]["params"]["url"] == "http://127.0.0.1:8000/mcp/"
+    assert FakeMcpServer.instances[0]["params"]["url"] == "http://127.0.0.1:8500/mcp/"
     tool_filter = FakeMcpServer.instances[0]["tool_filter"]
     assert tool_filter["allowed_tool_names"] == list(APPROVED_AGENT_TOOLS)
     assert set(APPROVED_AGENT_TOOLS) == {
@@ -223,7 +223,7 @@ async def test_agent_service_reconnects_after_a_runner_failure():
     service = AgentTurnService(
         settings=Settings(
             openai_api_key="test-key",
-            light_speed_mcp_url="http://127.0.0.1:8000/mcp",
+            light_speed_mcp_url="http://127.0.0.1:8500/mcp",
         ),
         store=store,
         server_factory=FakeMcpServer,

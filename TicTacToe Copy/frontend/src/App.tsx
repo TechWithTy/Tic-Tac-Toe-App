@@ -7,6 +7,7 @@ import { AiThinkingIndicator } from "~/components/ai-thinking-indicator";
 import { PlayerSelector } from "~/components/player-selector";
 import { MagicCard } from "~/components/ui/magic-card";
 import { Button } from "~/components/ui/button";
+import { WorkflowPanel } from "~/components/workflow-panel";
 import type { GameApi, GameState, PlayerSelection, PlayerType } from "~/types/game";
 
 const defaultPlayers: PlayerSelection = { x: "human", o: "human" };
@@ -38,7 +39,7 @@ async function settleAutomatedTurns(api: GameApi, state: GameState, onStep?: (st
 
 function errorMessage(error: unknown) {
   if (error instanceof TypeError && /fetch|network/i.test(error.message)) {
-    return "Unable to connect to the game server. Check that FastAPI is running at http://localhost:8000.";
+    return "Unable to connect to the game server. Check that FastAPI is running at http://localhost:8500.";
   }
   return error instanceof Error ? error.message : "The game service could not be reached.";
 }
@@ -257,6 +258,8 @@ function App() {
             </div>
           </MagicCard>
         </section>
+
+        <WorkflowPanel />
 
         <footer className="flex flex-col items-center gap-2 border-t border-white/10 pt-5 text-center text-xs text-white/30 sm:flex-row sm:items-center sm:justify-between sm:text-left">
           <span>Server proposes the truth. The client presents it clearly.</span>
