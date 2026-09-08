@@ -7,6 +7,8 @@ I used OpenAI Codex as an AI development partner to scaffold bounded slices, rev
 ## Run locally
 
 Prerequisites: Node.js 24+, pnpm 9.15.9, Python 3.12+, and [uv](https://docs.astral.sh/uv/).
+On Windows with nvm, run `nvm use 24.15.0` and verify `node --version` before continuing.
+The commands below use  so pnpm runs under the selected Node installation.
 
 ```powershell
 # From the repository root
@@ -19,8 +21,8 @@ uv run uvicorn app.main:app --reload --port 8000
 
 # Terminal 2: React frontend
 Set-Location frontend
-pnpm install
-pnpm dev
+ pnpm install
+ pnpm dev
 ```
 
 Open <http://localhost:5173>. FastAPI is available at <http://localhost:8000>; the MCP endpoint is <http://localhost:8000/mcp/>. Add an OpenAI key to `backend/.env` only when testing AI Agent mode. Without a key, the rest of the game remains playable and the AI Agent option is hidden.
@@ -30,10 +32,10 @@ Open <http://localhost:5173>. FastAPI is available at <http://localhost:8000>; t
 ```powershell
 # Frontend
 Set-Location frontend
-pnpm test
-pnpm typecheck
-pnpm lint
-pnpm build
+ pnpm test
+ pnpm typecheck
+ pnpm lint
+ pnpm build
 
 # Backend
 Set-Location ..\backend
@@ -72,17 +74,18 @@ under `backend/app`:
 
 ```powershell
 codeql database create codeql-db-javascript --language=javascript-typescript --source-root frontend --overwrite
-codeql database analyze codeql-db-javascript --format=sarif-latest --output=codeql-javascript.sarif --download
+codeql database analyze codeql-db-javascript codeql/javascript-queries:codeql-suites/javascript-security-extended.qls --format=sarif-latest --output=codeql-javascript.sarif --download
 
 codeql database create codeql-db-python --language=python --source-root backend/app --overwrite
-codeql database analyze codeql-db-python --format=sarif-latest --output=codeql-python.sarif --download
+codeql database analyze codeql-db-python codeql/python-queries:codeql-suites/python-security-extended.qls --format=sarif-latest --output=codeql-python.sarif --download
 ```
 
-The local Python scan requires a Python launcher available to CodeQL. On Windows,
-install Python 3.12 and ensure `py` or `python` is on `PATH`; WSL users can run the
-same commands with the Linux CodeQL bundle. CodeQL is an additional security signal,
-not a replacement for the project tests, Ruff, ESLint, TypeScript checks, or
-production build.
+The local Python scan requires the Python launcher available to CodeQL. On Windows,
+install Python 3.12 with the **Python Launcher (`py.exe`)** option enabled and verify
+it with `py --version`; `python` alone is not sufficient for the Windows CodeQL
+extractor. WSL users can run the same commands with the Linux CodeQL bundle. CodeQL
+is an additional security signal, not a replacement for the project tests, Ruff,
+ESLint, TypeScript checks, or production build.
 
 ## Project structure
 

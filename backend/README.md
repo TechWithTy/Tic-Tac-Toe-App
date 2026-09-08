@@ -11,7 +11,7 @@ Set-Location backend
 Copy-Item ..\.env.example .env
 ```
 
-Set `OPENAI_API_KEY` locally. Keep `backend/.env` untracked. `OPENAI_MODEL` and the Light Speed MCP URL/transport are configurable through the same file. The local default MCP URL is `http://127.0.0.1:8003/mcp`; the container Compose configuration explicitly targets the unified API endpoint at `http://127.0.0.1:8000/mcp`.
+Set `OPENAI_API_KEY` locally. Keep `backend/.env` untracked. `OPENAI_MODEL` and the Light Speed MCP URL/transport are configurable through the same file. The unified FastAPI process serves MCP at `http://127.0.0.1:8000/mcp`; Compose uses the same endpoint inside the backend container.
 
 Start the unified API and MCP server from `backend/`:
 

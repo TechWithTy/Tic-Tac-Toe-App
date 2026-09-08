@@ -189,7 +189,7 @@ function App() {
               <p className="text-xs text-white/40">A server-led tic-tac-toe room</p>
             </div>
           </div>
-          <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-xs text-white/45">
+          <span className="inline-flex self-center items-center gap-2 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5 text-center text-xs text-white/45 sm:self-auto">
             {connectionStatus === "connected" && !isLoading ? <Wifi aria-hidden="true" className="h-3.5 w-3.5 text-[#d8ff56]" /> : <WifiOff aria-hidden="true" className="h-3.5 w-3.5 text-[#ff8a65]" />}
             {connectionLabel}
           </span>
@@ -209,7 +209,7 @@ function App() {
                 </div>
                 <span className="hidden rounded-full bg-white/5 px-3 py-1 text-xs text-white/45 sm:inline-flex">{pairingLabel(pendingPlayers)}</span>
               </div>
-              <div className="mt-5 grid min-w-0 gap-4 sm:grid-cols-2">
+              <div className="mt-5 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
                 <PlayerSelector player="x" value={pendingPlayers.x} onChange={(value) => updatePlayer("x", value)} aiAgentAvailable={aiAgentAvailable} disabled={isGameStarted || isLoading} />
                 <PlayerSelector player="o" value={pendingPlayers.o} onChange={(value) => updatePlayer("o", value)} aiAgentAvailable={aiAgentAvailable} disabled={isGameStarted || isLoading} />
               </div>

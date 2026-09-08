@@ -121,7 +121,7 @@ def test_agent_turn_route_rejects_when_current_player_is_not_ai_agent(mode: str)
 
 def test_settings_default_to_the_unified_fastapi_mcp_endpoint(monkeypatch):
     monkeypatch.delenv("LIGHT_SPEED_MCP_URL", raising=False)
-    assert str(Settings(_env_file=None).light_speed_mcp_url) == "http://127.0.0.1:8003/mcp"
+    assert str(Settings(_env_file=None).light_speed_mcp_url) == "http://127.0.0.1:8000/mcp"
 
 
 @pytest.mark.asyncio
