@@ -19,6 +19,6 @@ RUN uv sync --locked --no-dev
 COPY backend/app ./app
 COPY backend/mcp_server.py ./mcp_server.py
 
-EXPOSE 8000
+EXPOSE 8500
 
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8500"]

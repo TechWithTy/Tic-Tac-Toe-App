@@ -2,14 +2,14 @@
 
 ## Docker Compose
 
-The Compose stack runs the FastAPI backend on port `8000` and the Vite production build behind Nginx on port `8080`. Nginx proxies `/api/*` to the backend, so the frontend image is portable between local Compose and Kubernetes.
+The Compose stack runs the FastAPI backend on port `8500` and the Vite production build behind Nginx on port `8080`. Nginx proxies `/api/*` to the backend, so the frontend image is portable between local Compose and Kubernetes.
 
 ```powershell
 docker compose build
 docker compose up
 ```
 
-Open <http://localhost:8080>. Set `OPENAI_API_KEY` in the local ignored `.env` file when testing the runtime agent. The Compose backend exposes the Light Speed MCP endpoint at `/mcp` on port `8000`.
+Open <http://localhost:8080>. Set `OPENAI_API_KEY` in the local ignored `.env` file when testing the runtime agent. The Compose backend exposes the Light Speed MCP endpoint at `/mcp` on port `8500`.
 
 ## Kubernetes
 

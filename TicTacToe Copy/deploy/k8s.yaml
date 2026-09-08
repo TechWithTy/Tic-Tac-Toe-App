@@ -27,7 +27,7 @@ spec:
           image: tic-tac-toe-backend:local
           imagePullPolicy: IfNotPresent
           ports:
-            - containerPort: 8000
+            - containerPort: 8500
           envFrom:
             - configMapRef:
                 name: tic-tac-toe-runtime
@@ -41,13 +41,13 @@ spec:
           readinessProbe:
             httpGet:
               path: /docs
-              port: 8000
+              port: 8500
             initialDelaySeconds: 5
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: /docs
-              port: 8000
+              port: 8500
             initialDelaySeconds: 15
             periodSeconds: 20
 ---
@@ -59,8 +59,8 @@ spec:
   selector:
     app: tic-tac-toe-backend
   ports:
-    - port: 8000
-      targetPort: 8000
+    - port: 8500
+      targetPort: 8500
 ---
 apiVersion: apps/v1
 kind: Deployment
