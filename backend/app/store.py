@@ -9,8 +9,42 @@ from app.domain.minimax import best_move
 class GameMode(str, Enum):
     HUMAN_VS_HUMAN = "human_vs_human"
     HUMAN_VS_CPU = "human_vs_cpu"
+    HUMAN_VS_AI = "human_vs_ai"
+    CPU_VS_HUMAN = "cpu_vs_human"
     CPU_VS_CPU = "cpu_vs_cpu"
+    CPU_VS_AI = "cpu_vs_ai"
+    AI_VS_HUMAN = "ai_vs_human"
     AI_VS_CPU = "ai_vs_cpu"
+    AI_VS_AI = "ai_vs_ai"
+
+
+class PlayerType(str, Enum):
+    HUMAN = "human"
+    CPU = "cpu"
+    AI_AGENT = "ai-agent"
+
+
+@dataclass(frozen=True)
+class PlayerAssignments:
+    x: PlayerType
+    o: PlayerType
+
+    @classmethod
+    def from_mode(cls, mode: GameMode) -> "PlayerAssignments":
+        x, o = mode.value.split("_vs_")
+        type_by_name = {"human": PlayerType.HUMAN, "cpu": PlayerType.CPU, "ai": PlayerType.AI_AGENT}
+        return cls(type_by_name[x], type_by_name[o])
+
+    def for_player(self, player: Player) -> PlayerType:
+        return self.x if player is Player.X else self.o
+
+    def mode(self) -> GameMode:
+        name_by_type = {
+            PlayerType.HUMAN: "human",
+            PlayerType.CPU: "cpu",
+            PlayerType.AI_AGENT: "ai",
+        }
+        return GameMode(f"{name_by_type[self.x]}_vs_{name_by_type[self.o]}")
 
 
 class GameNotFoundError(LookupError):
@@ -25,15 +59,21 @@ class CpuTurnUnavailableError(ValueError):
 class GameRecord:
     game: Game
     mode: GameMode
+    players: PlayerAssignments
 
 
 class GameStore:
     def __init__(self) -> None:
         self._games: dict[str, GameRecord] = {}
 
-    def create(self, mode: GameMode) -> tuple[str, GameRecord]:
+    def create(
+        self,
+        mode: GameMode = GameMode.HUMAN_VS_HUMAN,
+        players: PlayerAssignments | None = None,
+    ) -> tuple[str, GameRecord]:
         game_id = uuid4().hex
-        record = GameRecord(game=Game.new(), mode=mode)
+        assignments = players or PlayerAssignments.from_mode(mode)
+        record = GameRecord(game=Game.new(), mode=assignments.mode(), players=assignments)
         self._games[game_id] = record
         return game_id, record
 
@@ -66,6 +106,4 @@ class GameStore:
         current_player = record.game.current_player
         if current_player is None:
             return False
-        if record.mode is GameMode.CPU_VS_CPU:
-            return True
-        return record.mode in {GameMode.HUMAN_VS_CPU, GameMode.AI_VS_CPU} and current_player is Player.O
+        return record.players.for_player(current_player) is PlayerType.CPU
