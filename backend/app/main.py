@@ -1,11 +1,11 @@
 from contextlib import asynccontextmanager
 
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.api.games import agent_turn_service
 from app.api.games import router as games_router
 from app.mcp_server import build_mcp_server
-from fastapi import FastAPI
 
 app = FastAPI(title="Tic-Tac-Toe API", version="0.1.0")
 app.add_middleware(

@@ -3,6 +3,7 @@ import logging
 from enum import Enum
 from typing import Annotated, NoReturn
 
+from fastapi import APIRouter, Body, HTTPException
 from pydantic import BaseModel, StrictInt
 
 from app.agent_service import (
@@ -22,7 +23,6 @@ from app.store import (
     PlayerAssignments,
     PlayerType,
 )
-from fastapi import APIRouter, Body, HTTPException
 
 
 class PlayerAssignmentsRequest(BaseModel):
