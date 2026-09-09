@@ -239,7 +239,7 @@ describe("player pairing setup", () => {
     fireEvent.click(screen.getByRole("button", { name: /start game/i }));
 
     const board = await screen.findByRole("grid", { name: /tic-tac-toe board/i });
-    expect(board).toHaveClass("aspect-square", "grid-cols-3", "grid-rows-3");
+    expect(board).toHaveClass("aspect-square", "grid-cols-3", "grid-rows-3", "mx-auto");
 
     const cells = within(board).getAllByRole("gridcell");
     expect(cells).toHaveLength(9);

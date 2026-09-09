@@ -14,7 +14,7 @@ export function GameBoard({ gameState, disabled = false, onCellSelect }: GameBoa
   return (
     <div
       aria-label="Tic-tac-toe board"
-      className="grid aspect-square w-full max-w-[34rem] grid-cols-3 grid-rows-3 gap-2 rounded-[1.5rem] bg-white/5 p-2 sm:gap-3 sm:p-3"
+      className="mx-auto grid aspect-square w-full max-w-[34rem] grid-cols-3 grid-rows-3 gap-2 rounded-[1.5rem] bg-white/5 p-2 sm:gap-3 sm:p-3"
       role="grid"
     >
       {gameState.board.map((mark, index) => {
