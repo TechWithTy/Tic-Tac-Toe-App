@@ -225,7 +225,7 @@ function App() {
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Round 01 · {pairingLabel(gameState.players)}</p>
-                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">{!isGameStarted ? "Ready when you are" : gameState.status === "in_progress" ? "Your next move" : "Round complete"}</h2>
+                  <h2 className="mt-2 text-center text-2xl font-semibold tracking-tight text-white sm:text-left">{!isGameStarted ? "Ready when you are" : gameState.status === "in_progress" ? "Your next move" : "Round complete"}</h2>
                 </div>
                 <Button aria-label="Reset game" className="h-10 rounded-xl border-white/10 bg-white/5 px-3 text-white/65 hover:bg-white/10 hover:text-white" disabled={isLoading || !isGameStarted} onClick={handleReset} variant="outline">
                   <RotateCcw aria-hidden="true" className="h-4 w-4" />
@@ -233,7 +233,7 @@ function App() {
                 </Button>
               </div>
 
-              <div aria-live="polite" className="mb-5 flex w-full flex-col items-center justify-center gap-2 rounded-2xl border border-[#d8ff56]/15 bg-[#d8ff56]/[0.06] px-4 py-4 text-center">
+              <div aria-live="polite" className="mx-auto mb-5 flex w-full max-w-[34rem] flex-col items-center justify-center gap-2 rounded-2xl border border-[#d8ff56]/15 bg-[#d8ff56]/[0.06] px-4 py-4 text-center">
                 <p className="text-xs uppercase tracking-[0.18em] text-[#d8ff56]/70">Current Turn</p>
                 <p className="text-sm font-medium text-white">{gameStatus} <span className="font-normal text-white/45">· Server State</span></p>
                 <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#d8ff56] text-lg font-semibold text-[#101219]">{gameState.currentPlayer ?? gameState.winner ?? "—"}</span>

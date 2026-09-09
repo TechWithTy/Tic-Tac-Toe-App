@@ -14,4 +14,17 @@ describe("workflow presentation panel", () => {
     expect(screen.getByText(/server-owned game engine/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /PR #1/i })).toHaveAttribute("href", "https://github.com/TechWithTy/Tic-Tac-Toe-App/pull/1");
   });
+
+  it("centers the delivery trace heading and subtitle on mobile", () => {
+    render(<WorkflowPanel />);
+
+    expect(screen.getByText("The delivery trace")).toHaveClass("justify-center", "lg:justify-start");
+    expect(screen.getByRole("heading", { name: /agent workflow/i }).parentElement).toHaveClass("text-center", "lg:text-left");
+    expect(screen.getByText(/A presentation layer for the decisions/)).toHaveClass(
+      "mx-auto",
+      "text-center",
+      "lg:mx-0",
+      "lg:text-left",
+    );
+  });
 });
