@@ -48,6 +48,7 @@ describe("player pairing setup", () => {
     expect(screen.getByText("GRIDLINE").closest("div.flex")).toHaveClass("flex-col", "items-center", "sm:flex-row");
     expect(screen.getByText("A server-led tic-tac-toe room").parentElement).toHaveClass("text-center", "sm:text-left");
     expect(screen.getByRole("heading", { name: /small board/i })).toHaveClass("text-center", "sm:text-left");
+    expect(screen.getByRole("heading", { name: /ready when you are/i })).toHaveClass("text-center", "sm:text-left");
     expect(screen.getByText(/focused arena for human play/i)).toHaveClass("text-center", "sm:text-left");
     expect(screen.getByRole("group", { name: /player x/i }).querySelector("legend")).toHaveClass("hidden", "sm:flex", "justify-start");
     expect(screen.getByRole("group", { name: /player o/i }).querySelector("legend")).toHaveClass("hidden", "sm:flex", "justify-start");
@@ -127,7 +128,7 @@ describe("player pairing setup", () => {
     expect(screen.getByText("Current Turn")).toBeInTheDocument();
     const turnPanel = screen.getByText("Current Turn").closest("[aria-live='polite']");
     expect(turnPanel).toHaveTextContent("X To Move · Server State");
-    expect(turnPanel).toHaveClass("items-center", "text-center");
+    expect(turnPanel).toHaveClass("items-center", "text-center", "mx-auto", "max-w-[34rem]");
   });
 
   it("renders one crisp hover indicator without a placeholder glyph in empty cells", async () => {
@@ -225,6 +226,24 @@ describe("player pairing setup", () => {
 
     const cell = await screen.findByRole("button", { name: "Cell 1" });
     expect(cell.className).not.toContain("hover:-translate-y-0.5");
+  });
+
+  it("keeps every board cell square across responsive widths", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => unavailableCapabilitiesResponse })
+      .mockResolvedValueOnce({ ok: true, json: async () => initialResponse });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: /start game/i }));
+
+    const board = await screen.findByRole("grid", { name: /tic-tac-toe board/i });
+    expect(board).toHaveClass("grid-rows-3", "mx-auto");
+    for (const cell of screen.getAllByRole("gridcell")) {
+      expect(cell).toHaveClass("min-h-0");
+      expect(cell.querySelector("button")).toHaveClass("aspect-square", "min-h-0");
+    }
   });
 
   it("shows the human move before the AI response finishes", async () => {

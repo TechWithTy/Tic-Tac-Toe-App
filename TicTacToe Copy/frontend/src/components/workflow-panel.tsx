@@ -5,12 +5,12 @@ export function WorkflowPanel() {
   return (
     <section aria-labelledby="workflow-heading" className="mx-auto mb-10 w-full max-w-7xl rounded-[2rem] border border-white/10 bg-[#11141c] p-5 text-[#f7f7f2] shadow-2xl shadow-black/20 sm:p-8">
       <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-        <div>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#d8ff56]"><span className="h-px w-7 bg-[#d8ff56]" /> The delivery trace</p>
+        <div className="text-center lg:text-left">
+          <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#d8ff56] lg:justify-start"><span className="h-px w-7 bg-[#d8ff56]" /> The delivery trace</p>
           <h2 id="workflow-heading" className="mt-3 text-3xl font-semibold tracking-[-0.05em]">Agent workflow</h2>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-white/50">A presentation layer for the decisions, ownership boundaries, and evidence behind the playable app. It shows why we did something—not private chain-of-thought.</p>
+          <p className="mx-auto mt-3 max-w-2xl text-center text-sm leading-6 text-white/50 lg:mx-0 lg:text-left">A presentation layer for the decisions, ownership boundaries, and evidence behind the playable app. It shows why we did something—not private chain-of-thought.</p>
         </div>
-        <div className="flex flex-wrap items-center gap-2 text-xs text-white/45"><span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">Epic</span><ArrowRight size={13} /><span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">Sprint</span><ArrowRight size={13} /><span className="rounded-full border border-[#d8ff56]/30 bg-[#d8ff56]/10 px-3 py-1.5 text-[#d8ff56]">Task</span></div>
+        <div className="flex flex-wrap items-center justify-center gap-2 text-xs text-white/45 lg:justify-end"><span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">Epic</span><ArrowRight size={13} /><span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1.5">Sprint</span><ArrowRight size={13} /><span className="rounded-full border border-[#d8ff56]/30 bg-[#d8ff56]/10 px-3 py-1.5 text-[#d8ff56]">Task</span></div>
       </div>
 
       <div aria-label="Delivery context" className="mt-6 grid gap-3 md:grid-cols-3">
