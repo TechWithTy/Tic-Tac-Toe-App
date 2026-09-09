@@ -224,7 +224,7 @@ function App() {
               <div className="mb-6 flex items-start justify-between gap-4">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.2em] text-white/35">Round 01 · {pairingLabel(gameState.players)}</p>
-                  <h2 className="mt-2 text-2xl font-semibold tracking-tight text-white">{!isGameStarted ? "Ready when you are" : gameState.status === "in_progress" ? "Your next move" : "Round complete"}</h2>
+                  <h2 className="mt-2 text-center text-2xl font-semibold tracking-tight text-white sm:text-left">{!isGameStarted ? "Ready when you are" : gameState.status === "in_progress" ? "Your next move" : "Round complete"}</h2>
                 </div>
                 <Button aria-label="Reset game" className="h-10 rounded-xl border-white/10 bg-white/5 px-3 text-white/65 hover:bg-white/10 hover:text-white" disabled={isLoading || !isGameStarted} onClick={handleReset} variant="outline">
                   <RotateCcw aria-hidden="true" className="h-4 w-4" />
