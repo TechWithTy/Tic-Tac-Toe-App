@@ -228,6 +228,24 @@ describe("player pairing setup", () => {
     expect(cell.className).not.toContain("hover:-translate-y-0.5");
   });
 
+  it("keeps every board cell square across responsive widths", async () => {
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => unavailableCapabilitiesResponse })
+      .mockResolvedValueOnce({ ok: true, json: async () => initialResponse });
+    vi.stubGlobal("fetch", fetchMock);
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: /start game/i }));
+
+    const board = await screen.findByRole("grid", { name: /tic-tac-toe board/i });
+    expect(board).toHaveClass("grid-rows-3");
+    for (const cell of screen.getAllByRole("gridcell")) {
+      expect(cell).toHaveClass("min-h-0");
+      expect(cell.querySelector("button")).toHaveClass("aspect-square", "min-h-0");
+    }
+  });
+
   it("shows the human move before the AI response finishes", async () => {
     const aiGameStartResponse = {
       ...initialResponse,
